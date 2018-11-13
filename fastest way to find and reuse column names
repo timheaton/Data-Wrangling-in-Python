@@ -1,0 +1,16 @@
+import pandas as pd
+df = pd.read_csv("Z:/SLDS Early Learning/Testing/Site_Inspection_cleaned.csv")
+
+list(df)
+
+>>>
+['Last Name',
+ 'First Name',
+ 'Email',
+ 'Address',
+ 'City',
+ 'cell',
+ 'home',
+ 'Linkedin',
+ 'Facebook',
+ 'Twitter']
