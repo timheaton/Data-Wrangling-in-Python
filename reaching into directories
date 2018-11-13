@@ -1,0 +1,5 @@
+# this block of code sorts the files to the correct folders and renames them by month /year
+for subdir, dirs, files in os.walk(input_directory):
+    for file in files:
+        print(subdir) #  "subdir" finds the subdirectory folders
+        print(files) #  "files"  find the files in the subdirectory
