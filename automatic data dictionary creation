@@ -1,0 +1,28 @@
+# fastest way to build data dictionaries from flat files
+# exception handling allows you to go back and address "bad" files
+
+import pandas as pd
+import numpy
+from pydqc import infer_schema, data_summary, data_compare, data_consist
+import os
+
+input_directory = ('your input file/')
+output_directory = ('your output file/')
+file_type = ".xlsx"
+for file in missing_files: # this creates the data dictionary, then creates a Excel file
+    
+    try:
+        infer_schema.infer_schema(pd.read_csv(input_directory+file,encoding='cp1252',engine='python'), fname=file[:-4], output_root=output_directory, 
+                          sample_size=1.0, type_threshold=0.5, n_jobs=2, base_schema=None).to_csv(output_directory+file_type, mode='a',index=False)
+    except TypeError: 
+        print(file + "_TypeError")
+        pass
+    except UnicodeDecodeError:
+        print(file + "_UnicodeDecodeError")
+        pass
+    except KeyError:
+        print(file + "_KeyError")
+        pass
+    except AttributeError:
+        print(file + "_AttributeError")
+        pass
