@@ -1,0 +1,16 @@
+# load tables to memory
+import pymssql
+import pandas as pd
+from datetime import datetime
+
+start = datetime.now()
+
+## instance a python db connection object
+conn = pymssql.connect(server="server name", user="user name",password="password", port="0000")  # You can lookup the port number inside SQL server. 
+
+stmt = "SELECT * FROM ["datbase].[table]"
+
+# Excute Query here
+df = pd.read_sql(stmt,conn)
+
+print(datetime.now()-start)
