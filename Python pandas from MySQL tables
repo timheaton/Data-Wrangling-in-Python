@@ -1,16 +1,19 @@
-# load tables to memory
-import pymssql
+
+# this code block reads the tables in a database, the creates a csv file for each table (data included)
+output = ('Z:/BoP/eLicensure/')
+
+import mysql.connector as sql
 import pandas as pd
-from datetime import datetime
 
-start = datetime.now()
+db_connection = sql.connect(host='server name', database='database', user='user name', password='password')
+db_cursor = db_connection.cursor()
+df = pd.read_sql("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='database'", con=db_connection)
 
-## instance a python db connection object
-conn = pymssql.connect(server="server name", user="user name",password="password", port="0000")  # You can lookup the port number inside SQL server. 
+#change pandas to list for looping code
+tables = df['TABLE_NAME'].tolist()
 
-stmt = "SELECT * FROM ["datbase].[table]"
-
-# Excute Query here
-df = pd.read_sql(stmt,conn)
-
-print(datetime.now()-start)
+#save tables to csv files
+for i in tables:
+    #print(i)
+    pd.read_sql("SELECT * FROM " + i, con=db_connection).to_csv(output + i + '.csv')
+    
