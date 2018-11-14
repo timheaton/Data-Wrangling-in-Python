@@ -1,0 +1,92 @@
+#one-shot de-IDer where column names are not matches, ie "Last_Names", "LastNames" and "PrimaryLastNames" used. 
+#delete PPI 
+#hashing algo
+#Use fuzzy to find columns that are not consistantly named
+#clean those columns
+#export to csv 
+import numpy
+import os
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+import csv
+import numpy as np
+from nameparser import HumanName
+import re
+import pandas as pd
+from dateutil.parser import parse
+import dateutil.parser
+from pandas.util import hash_pandas_object
+
+
+input_directory = ("your input directory")
+output_directory = ("your output directory")
+file_type = (".csv")
+os.chdir(output_directory) #out to this folder
+
+for file in os.listdir(os.fsencode(input_directory)):
+    filename = os.fsdecode(file)
+    if filename.endswith(file_type):
+        #XXXXXXX this block uses fuzzy matching to fine first name, last, etc XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        pre_clean = pd.read_csv(input_directory + filename,encoding='cp1252')
+        
+        #fuzzy match column names
+        list_1 = []
+        for i in list(pre_clean):
+            if fuzz.token_set_ratio(i,'FirstName PrimaryFirstName') > 90:
+                First_Name = i
+                list_1.append(i)
+            else:
+                First_Name = None
+            
+                
+        for i in list(pre_clean):
+            if fuzz.token_set_ratio(i,'LastName PrimaryLastName') > 90:
+                Last_Name = i
+                list_1.append(i)
+            else:
+                Last_Name = None
+            
+        
+        for i in list(pre_clean):
+            if fuzz.token_set_ratio(i,'DateofBirth DOB') > 90:
+                Birthday = i
+                list_1.append(i)
+            else:
+                Birthday = None
+                
+        for i in list(pre_clean):
+            if fuzz.token_set_ratio(i,'Gender Sex') > 90:
+                Gender = i
+                list_1.append(i)
+            else:
+                Gender = None
+            
+        for i in list(pre_clean):
+            if fuzz.token_set_ratio(i,'PrimaryInitial MiddleName PrimaryMiddleInitial') > 90:
+                Middle_Name = i
+                list_1.append(i)
+            else:
+                Middle_Name =  None
+        
+              
+        #takes the list created (appended) above and compares that to the column names needing to be NULLed
+        list_2 = list(pre_clean) 
+        columns = np.intersect1d(list_2,list_1)
+        try:
+            pre_clean[columns.tolist()]="NULL"      
+        except TypeError:
+            pass
+        #for index, row in pre_clean.iterrows():
+         #   try:
+          #      pre_clean[columns.tolist()]="NULL"
+           # except TypeError:
+            #    pass
+                
+            #try:#error catching since not all file will have names, DOB or gender
+            #    pre_clean[[First_Name, Last_Name, Middle_Name, Birthday, Gender]]="NULL"
+            #except KeyError:
+            #    pass
+            
+            
+        #save each to csv files
+        pre_clean.to_csv(output_directory + file.decode("utf-8")[:-4] + "_deIDed" + file_type)
