@@ -1,0 +1,4 @@
+import glob
+path = "Z:/SLDS Early Learning/AJFC/ChiildPlusData2016_2017/*.csv"
+for fname in glob.glob(path):
+    print(fname)
