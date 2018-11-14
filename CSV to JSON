@@ -1,0 +1,39 @@
+import csv
+import json
+import os
+import pandas as pd
+
+directory = ("your folder") #where the out files will land files
+file_2_read = ("your file") #the first csv file
+file_cleaned = ("your file") #the cleaned and JSON ready csv file 
+jason_file_name = ('your file.json') #the JASON file output 
+
+os.chdir(directory)
+#this block converts the pipe file to csv
+
+with open(file_2_read, "rt") as f:
+    #next(f, None)
+    readerpipe = csv.reader(f, delimiter = ',')
+    with open(file_cleaned, "wt", newline='') as outputfile:
+        
+        writer = csv.writer(outputfile)
+        
+        writer.writerows(readerpipe)
+
+#this block reads the de-piped file and converts it to JSON 
+
+
+
+csvfile = open(file_cleaned,'r')
+jsonfile = open(jason_file_name, 'w')
+
+column_names = list(pd.read_csv(file_cleaned))
+fieldnames = dict.fromkeys(column_names) #this code sets up the "dtype" function
+
+reader = csv.DictReader( csvfile, fieldnames)
+for row in reader:
+    json.dump(row, jsonfile)
+    jsonfile.write('\n')
+
+jsonfile.close()
+csvfile.close()
