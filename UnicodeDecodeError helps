@@ -1,0 +1,15 @@
+Reading files and the best encodings / engines I've found
+
+>pd.read_csv("your file", encoding="Latin-1",engine='c')
+
+
+encodings:
+'cp1252'
+"Latin-1"
+"utf-8"
+
+engines:
+"python'
+"c"
+
+
