@@ -1,4 +1,15 @@
+#use glob
+
 import glob
 path = "'your folder'/*.csv"
 for fname in glob.glob(path):
     print(fname)
+
+
+#or another way
+
+import os
+for subdir, dirs, files in os.walk(input_directory):
+    for file in files:
+        if os.path.join(subdir, file).endswith(file):
+            print(file)
