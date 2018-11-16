@@ -1,0 +1,23 @@
+#I don't see many people using error catching, but it is a great strategy to sift through problem files,
+#for example, this line of code is sorting files into folders 
+
+for subdir, dirs, files in os.walk(input_directory):
+    for file in files:
+            
+        try:
+            
+            if os.path.join(subdir, file).endswith('.csv'):
+                #print(os.path.join(subdir, file))
+                subset_file = pd.read_csv(os.path.join(subdir, file), error_bad_lines=False, encoding='cp1252',engine='python',sep='|', index_col=False,).rename(columns=str.upper)
+                column_names = list(set(globals()[file[:-4]]).intersection(list(subset_file)))
+                #column_names = list(set().union(globals()[file[:-4]],list(subset_file)))
+                subset_file[column_names].to_csv(subdir[:35]+subdir[40:44] + " working/" + file[:-4] + '/' + subdir[40:]+file[:-4] +".csv", index = False)
+                path[:48]+file[:-4]+subdir[40:]+".csv"
+                
+ # Use error catching!
+        except FileNotFoundError:
+            print(subdir + file + "-FileNotFoundError")
+            pass
+        except KeyError:
+            print(subdir + file + "-KeyError")
+            pass
