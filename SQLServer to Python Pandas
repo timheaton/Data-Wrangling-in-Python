@@ -1,0 +1,18 @@
+# load tables to memory
+import pymssql
+import pandas as pd
+from datetime import datetime
+
+start = datetime.now()
+#conn = pymssql.connect(server="SAS-SQLSERVER", user="theaton",password="G0Dawg52018!!", port="1433")  # You can lookup the port number inside SQL server. 
+
+## instance a python db connection object- same form as psycopg2/python-mysql drivers also
+conn = pymssql.connect(server="server", user="user",password="password", port="0000")  # You can lookup the port number inside SQL server. 
+
+
+stmt = "SELECT * FROM [Db].[table]"
+
+# Excute Query here
+MS_201806 = pd.read_sql(stmt,conn)
+
+print(datetime.now()-start)
