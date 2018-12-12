@@ -1,0 +1,6 @@
+#for naming the files for each folder type
+import os
+rootdir = 'Z:/MDHS/2015/'
+for subdir, dirs, files in os.walk(rootdir):
+    for file in files:
+        print (os.path.join(file))
