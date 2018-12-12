@@ -1,0 +1,4 @@
+#creates new folders based on prefix of files
+import os
+path = "Z:/MDHS/2015/Test/"+heading
+os.mkdir(path)
