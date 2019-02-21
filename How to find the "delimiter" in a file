@@ -1,0 +1,2 @@
+with open('file_name' newline='') as csvfile:
+                dialect = csv.Sniffer().sniff(csvfile.read(1024))
