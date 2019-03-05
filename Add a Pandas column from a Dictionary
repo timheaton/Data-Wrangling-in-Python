@@ -1,0 +1,6 @@
+#match names in "US Census derived MS names file "
+MS_Name_Gender = pd.read_csv("file name.csv")
+#create a dictionary
+Name_Gender_Dict = MS_Name_Gender.set_index("Name").to_dict()
+#Create a new column with the matched names to genders
+ToBeCleaned['GCE_GENDER_CODE'] = ToBeCleaned['FIRSTNAME'].map(Name_Gender_Dict['gender'])
