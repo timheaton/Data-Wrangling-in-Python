@@ -1,0 +1,15 @@
+spreadsheet = 'your file.xlsx'
+xls = pd.ExcelFile(spreadsheet)
+sheets = xls.sheet_names
+appended_data = []
+for i in sheets:
+    data = pd.read_excel(spreadsheet, sheet_name = i, header = None, skiprows=[0,1])
+    data["Table_Name"] = i
+    # store DataFrame in list
+    appended_data.append(data)
+# see pd.concat documentation for more info
+appended_data = pd.concat(appended_data, axis=0)
+# write DataFrame to an excel sheet 
+#appended_data.to_csv('M:/Tim Heaton/SLDS/test.csv')
+appended_data.columns = ["Field_Name", "Data_Type", "Description/Values","Table_Name"]
+appended_data.to_csv(spreadsheet[:-5] + "_consolidated.csv")
