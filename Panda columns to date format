@@ -1,0 +1,2 @@
+df['Attendance Date'] = pd.to_datetime(df['Attendance Date'], errors='coerce') #this line deals with OUTOFBOUNDS error with time
+df[Attendance Date] = pd.to_datetime(df.Attendance Date.dt.strftime('%Y-%m-%d')
