@@ -1,1 +1,1 @@
-df = df.rename(columns={'Attendance Date':'Attendance_Date'}, inplace=True)
+df.rename(columns={'Attendance Date':'Attendance_Date'}, inplace=True)
