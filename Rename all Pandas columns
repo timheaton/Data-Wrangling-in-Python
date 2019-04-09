@@ -1,0 +1,8 @@
+cleaned_columns = ['AbsenceReasonCodeDescription', 'AttendanceCodeDescription',
+       'Attendance_Date', 'ClassroomName', 'SiteName', 'AbandonedDate',
+       'AcceptedDate', 'DropAcceptDate', 'DropWaitlistDate', 'EnrolledDate',
+       'EntryDate', 'TerminationDate', 'ChildPlusFamilyID', 'Birthday',
+       'ChildPlusID', 'Name(First)', 'Name(Last)', 'Name(Middle)',
+       'NameSuffix', 'PersonID', 'SSN']
+       
+df.columns = cleaned_columns
