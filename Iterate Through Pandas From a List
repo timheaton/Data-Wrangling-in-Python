@@ -1,6 +1,6 @@
 date_fields = ('text1', 'text2','text3')
 
 for i in date_fields:
-    for index, row in db_table.head().iterrows():
+    for index, row in db_table().iterrows():
         db_table[i] = pd.to_datetime(db_table[i], errors='coerce') 
         db_table[i] = pd.to_datetime(db_table[i]).dt.strftime('%Y-%m-%d')
