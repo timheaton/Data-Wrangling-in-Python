@@ -1,0 +1,54 @@
+#Production code
+import pymssql
+import numpy as np
+import pandas as pd
+
+DataMart_Tables = pd.read_csv('Z:/SLDS Early Learning/Normalized/Copy of SLDS_CodebooksV4 MARKED FOR DELETION_Smalltest.csv')
+New_Table_Name_Suffix = 'NormalizerTest_'
+
+DataMart_Tables = DataMart_Tables[(DataMart_Tables['not used']!='x')] #all the needed fields are marked by "x" in the file
+DataMart_Tables_Subset = DataMart_Tables[["Field_Name",".dbo._Name"]] #just the columns we need
+table_names = DataMart_Tables_Subset['.dbo._Name'].unique().tolist() #unique table names
+table_names_pd = pd.DataFrame(table_names)#forgot to delete this or I'm afraid to
+
+
+
+for i in table_names:
+    tables = DataMart_Tables_Subset.loc[(DataMart_Tables_Subset['.dbo._Name'] == i)]#find the columns for each table
+    column_names = tables['Field_Name'] #1-modify tables['Field_Name'] to use in the query, must be a string
+    column_names = column_names.astype(str).values.tolist()#2-modify tables['Field_Name'] for query, must be a string
+    column_names = ', '.join(column_names)#3-modify tables['Field_Name'] to use in the query, must be a string
+    
+    database_table = i # interation will be the name of the ".dbo."
+    #New_table_name = New_Table_Name_Suffix + i #the table to be updated with the data
+
+    conn = pymssql.connect(server="warehouse", user="theaton",password="G0Dawg52019!!", port="1433")  
+    stmt = "SELECT " + column_names + " FROM " + database_table
+    # Excute Query here
+    db_table = pd.read_sql(stmt,conn)
+
+    #cleaning codes
+    try:
+        db_table = db_table.replace(r'^\s*$', np.nan, regex=True)#replace all empty fields with NaN (will be "NULL" on SQL import)
+    except:
+        pass
+
+
+    #date consistant
+    for col in db_table.columns:
+        if db_table[col].dtype == 'object':
+            try:                
+                db_table[col] = pd.to_datetime(db_table[col], errors='coerce')
+                db_table[col] = pd.to_datetime(db_table[col]).dt.strftime('%Y-%m-%d')
+            except ValueError:
+                pass
+
+
+    
+    #SQL table update code block
+    from sqlalchemy import *
+    import pyodbc
+    New_table_name = New_Table_Name_Suffix + i #the table to be updated with the data
+    engine = create_engine('mssql+pymssql://theaton:G0Dawg52019!!@warehouse:1433/EC_SLDS')
+    # write the DataFrame to a table in the sql database
+    db_table.to_sql(New_table_name, engine, if_exists = 'replace',index=False)
