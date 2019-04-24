@@ -1,0 +1,53 @@
+mport os
+os.getcwd()
+
+
+# In[244]:
+
+
+#read all the excel tabs
+xls = pd.ExcelFile('M:/Tim Heaton/SLDS/MDE Codebook.xlsx')
+sheets = xls.sheet_names
+for i in sheets:
+    print(i)
+
+
+# In[261]:
+
+
+spreadsheet = 'M:/Tim Heaton/SLDS/CCIS Codebook- 80%.xlsx' # the spreadsheet to be explored
+database = 'CCIS Codebook- 80%' #notation for [DataBase_Table] columns
+
+xls = pd.ExcelFile(spreadsheet) #reads all the tabs
+sheets = xls.sheet_names
+
+appended_data = []
+
+for i in sheets:
+    data = pd.read_excel(spreadsheet, sheet_name = i, header = None, skiprows=[0,1])#skiprows avoids labels on row 1 & 2
+    data["DataBase_Table"] = database + "_" + i
+    # store DataFrame in list
+    appended_data.append(data)
+# see pd.concat documentation for more info
+appended_data = pd.concat(appended_data, axis=0)
+# write DataFrame to an excel sheet 
+#appended_data.to_csv('M:/Tim Heaton/SLDS/test.csv')
+appended_data.columns = ["Field_Name", "Data_Type", "Description/Values","DataBase_Table"]
+appended_data = appended_data[["Field_Name", "Data_Type", "Description/Values","DataBase_Table"]]
+appended_data.to_csv(spreadsheet[:-5] + "_consolidated.csv")
+
+
+# In[284]:
+
+
+import os
+appended_data = []
+for file in os.listdir("M:/Tim Heaton/SLDS"):
+    if file.endswith(".csv"):
+        data = pd.read_csv(file)
+        appended_data.append(data)
+appended_data = pd.concat(appended_data, axis=0)
+# write DataFrame to an excel sheet 
+#appended_data.to_csv('M:/Tim Heaton/SLDS/test.csv')
+#appended_data.columns = ["Field_Name", "Data_Type", "Description/Values","Table_Name"]
+appended_data.to_csv("M:/Tim Heaton/SLDS/Code_Book_consolidated.csv")
