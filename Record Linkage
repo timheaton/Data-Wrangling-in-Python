@@ -1,0 +1,237 @@
+#!pip install recordlinkage
+#https://recordlinkage.readthedocs.io/en/latest/notebooks/link_two_dataframes.html
+import recordlinkage
+from recordlinkage.preprocessing import clean, phonetic
+import pandas as pd
+
+#Questions 
+# Should the ADDRESS field be run through the cleaner? This may make it less accruate?
+ToBeCleaned = 'M:\Tim Heaton\SLDS\Data Dictionary\MergedDict/xxx.csv'
+CleanedGoldCopy = 'Z:/SLDS Early Learning/Normalized/xxxxxxxxxxx.csv'
+
+
+#cleaning the GoldCopy file
+
+CleanedGoldCopy = pd.read_csv(CleanedGoldCopy)
+
+CleanedGoldCopy['Field_Name'] = recordlinkage.preprocessing.clean(CleanedGoldCopy['Field_Name'] , lowercase=True, replace_by_none='[^ \\-\\_A-Za-z0-9]+', \
+                                  replace_by_whitespace='[\\-\\_]', strip_accents=None, remove_brackets=True, \
+                                  encoding='utf-8', decode_error='strict')
+
+CleanedGoldCopy['Table_Name'] = recordlinkage.preprocessing.clean(CleanedGoldCopy['Table_Name'] , lowercase=True, replace_by_none='[^ \\-\\_A-Za-z0-9]+', \
+                                  replace_by_whitespace='[\\-\\_]', strip_accents=None, remove_brackets=True, \
+                                  encoding='utf-8', decode_error='strict')
+
+CleanedGoldCopy['Data Type'] = recordlinkage.preprocessing.clean(CleanedGoldCopy['Data Type'] , lowercase=True, replace_by_whitespace='[\\-\\_]',\
+                                strip_accents=None, remove_brackets=True, \
+                                encoding='utf-8', decode_error='strict')
+
+
+#CleanedGoldCopy['BIRTHDATE'] = pd.to_datetime(CleanedGoldCopy['BIRTHDATE'])
+
+CleanedGoldCopy.head() 
+
+
+#cleaning the ToBeMatched file
+
+ToBeCleaned = pd.read_csv(ToBeCleaned)
+
+ToBeCleaned['Field_Name'] = recordlinkage.preprocessing.clean(ToBeCleaned['Field_Name'] , lowercase=True, replace_by_none='[^ \\-\\_A-Za-z0-9]+', \
+                                  replace_by_whitespace='[\\-\\_]', strip_accents=None, remove_brackets=True, \
+                                  encoding='utf-8', decode_error='strict')
+
+ToBeCleaned['Table_Name'] = recordlinkage.preprocessing.clean(ToBeCleaned['Table_Name'] , lowercase=True, replace_by_none='[^ \\-\\_A-Za-z0-9]+', \
+                                  replace_by_whitespace='[\\-\\_]', strip_accents=None, remove_brackets=True, \
+                                  encoding='utf-8', decode_error='strict')
+
+ToBeCleaned['Data Type'] = recordlinkage.preprocessing.clean(ToBeCleaned['Data Type'] , lowercase=True, replace_by_whitespace='[\\-\\_]',\
+                                strip_accents=None, remove_brackets=True, \
+                                encoding='utf-8', decode_error='strict')
+
+
+#ToBeCleaned['BIRTHDATE'] = pd.to_datetime(ToBeCleaned['BIRTHDATE'])
+
+
+ToBeMatched = ToBeCleaned
+ToBeMatched.head()
+
+
+
+# first match is perfect for PII
+import pandas as pd
+#ToBeMatched = pd.read_csv('T:/Active Projects/JCJC Project/Populus/peoplesoft/To_Be_Matched_Test.csv')
+GoldCopy = CleanedGoldCopy #pd.read_csv('T:/Active Projects/JCJC Project/Populus/peoplesoft/Gold_Copy.csv')
+
+
+
+# first match 
+#blocker or indexer
+indexer = recordlinkage.Index()
+indexer.block("not used")
+blocker = indexer.index(ToBeMatched, GoldCopy)
+
+# Compare records
+compare_cl = recordlinkage.Compare()
+compare_cl.exact('Field_Name', 'Field_Name', label='Field_Name')
+compare_cl.exact('Table_Name', 'Table_Name', label='Table_Name')
+compare_cl.exact('Data Type', 'Data Type', label='Data Type')
+compare_cl.exact('not used', 'not used', label='not used')
+
+features = compare_cl.compute(blocker, ToBeMatched, GoldCopy)
+features.sum(axis=1).value_counts().sort_index(ascending=False)
+
+
+new_df = features
+new_df['agg'] = new_df.sum(axis=1)
+# here's the code for the "unmatched"
+y = (new_df.loc[new_df['agg'] ==4.0]).index.values.tolist()
+i = [ j[0] for j in y]
+
+unmatched_first = ToBeMatched.drop(i,errors ='ignore') #this errors ignore allows a files of unequal sizes 
+
+matched_first = ToBeMatched.drop(unmatched_first.index.values)
+len(matched_first), len(unmatched_first)
+
+
+#second match is using method='jarowinkler', threshold=0.85 and 0.75 for NAMES. This to capture mispellings
+ToBeMatched = unmatched_first
+
+#blocker or indexer
+indexer = recordlinkage.Index()
+indexer.block("not used")
+blocker = indexer.index(ToBeMatched, GoldCopy)
+
+# Compare records
+compare_cl = recordlinkage.Compare()
+compare_cl.string('Field_Name', 'Field_Name', method='jarowinkler', threshold=0.85, label='Field_Name')
+compare_cl.string('Table_Name', 'Table_Name', method='jarowinkler', threshold=0.85, label='Table_Name')
+compare_cl.exact('Data Type', 'Data Type', label='Data Type')
+compare_cl.exact('not used', 'not used', label='not used')
+
+'''
+compare_cl.string('LAST_NAME', 'LAST_NAME', method='jarowinkler', threshold=0.85, label='LAST_NAME')
+compare_cl.string('FIRST_NAME', 'FIRST_NAME', method='jarowinkler', threshold=0.75, label='FIRST_NAME')
+compare_cl.exact('BIRTHDATE', 'BIRTHDATE', label='BIRTHDATE')
+compare_cl.exact('SEX', 'SEX', label='SEX')
+'''
+features = compare_cl.compute(blocker, ToBeMatched, GoldCopy)
+features.sum(axis=1).value_counts().sort_index(ascending=False)
+
+
+new_df = features
+new_df['agg'] = new_df.sum(axis=1)
+# here's the code for the "unmatched"
+y = (new_df.loc[new_df['agg'] ==4.0]).index.values.tolist()
+i = [ j[0] for j in y]
+
+unmatched_second = ToBeMatched.drop(i,errors ='ignore') #this errors ignore allows a files of unequal sizes 
+
+matched_second = ToBeMatched.drop(unmatched_second.index.values)
+len(matched_second), len(unmatched_second)
+
+
+
+#third match is using "jarowinkler" for PII (except SEX) and "y" value of 4
+
+ToBeMatched = unmatched_second
+
+#blocker or indexer
+indexer = recordlinkage.Index()
+indexer.block("not used")
+blocker = indexer.index(ToBeMatched, GoldCopy)
+
+# Compare records
+compare_cl = recordlinkage.Compare()
+compare_cl.string('Field_Name', 'Field_Name', method='jarowinkler', threshold=0.85, label='Field_Name')
+compare_cl.string('Table_Name', 'Table_Name', method='jarowinkler', threshold=0.85, label='Table_Name')
+compare_cl.string('Data Type', 'Data Type',  method='jarowinkler', threshold=0.5, label='Data Type')
+compare_cl.exact('not used', 'not used', label='not used')
+
+features = compare_cl.compute(blocker, ToBeMatched, GoldCopy)
+features.sum(axis=1).value_counts().sort_index(ascending=False)
+
+
+new_df = features
+new_df['agg'] = new_df.sum(axis=1)
+# here's the code for the "unmatched"
+y = (new_df.loc[new_df['agg'] ==4.0]).index.values.tolist()
+i = [ j[0] for j in y]
+
+unmatched_third = ToBeMatched.drop(i,errors ='ignore') #this errors ignore allows a files of unequal sizes 
+
+matched_third = ToBeMatched.drop(unmatched_third.index.values)
+len(matched_third), len(unmatched_third)
+
+
+
+#fourth match is using PII and ADDRESS (street address)
+
+ToBeMatched = unmatched_third
+
+#blocker or indexer
+indexer = recordlinkage.Index()
+indexer.block("not used")
+blocker = indexer.index(ToBeMatched, GoldCopy)
+
+# Compare records
+compare_cl = recordlinkage.Compare()
+compare_cl.string('Field_Name', 'Field_Name', method='jarowinkler', threshold=0.85, label='Field_Name')
+compare_cl.string('Table_Name', 'Table_Name', method='jarowinkler', threshold=0.85, label='Table_Name')
+compare_cl.string('Data Type', 'Data Type',  method='jarowinkler', threshold=0.5, label='Data Type')
+compare_cl.exact('not used', 'not used', label='not used')
+
+features = compare_cl.compute(blocker, ToBeMatched, GoldCopy)
+features.sum(axis=1).value_counts().sort_index(ascending=False)
+
+
+new_df = features
+new_df['agg'] = new_df.sum(axis=1)
+# here's the code for the "unmatched"
+y = (new_df.loc[new_df['agg'] ==3.0]).index.values.tolist()
+i = [ j[0] for j in y]
+
+unmatched_fourth = ToBeMatched.drop(i,errors ='ignore') #this errors ignore allows a files of unequal sizes 
+
+matched_fourth = ToBeMatched.drop(unmatched_fourth.index.values)
+len(matched_fourth), len(unmatched_fourth)
+
+
+
+
+#fifth match 
+ToBeMatched = unmatched_fourth
+
+#blocker or indexer
+indexer = recordlinkage.Index()
+indexer.block("not used")
+blocker = indexer.index(ToBeMatched, GoldCopy)
+
+# Compare records
+compare_cl = recordlinkage.Compare()
+compare_cl = recordlinkage.Compare()
+compare_cl.string('Field_Name', 'Field_Name', method='jarowinkler', threshold=0.85, label='Field_Name')
+compare_cl.string('Table_Name', 'Table_Name', method='jarowinkler', threshold=0.85, label='Table_Name')
+compare_cl.string('Data Type', 'Data Type',  method='jarowinkler', threshold=0.5, label='Data Type')
+compare_cl.exact('not used', 'not used', label='not used')
+
+
+features = compare_cl.compute(blocker, ToBeMatched, GoldCopy)
+features.sum(axis=1).value_counts().sort_index(ascending=False)
+
+
+new_df = features
+new_df['agg'] = new_df.sum(axis=1)
+# here's the code for the "unmatched"
+y = (new_df.loc[new_df['agg'] ==2.0]).index.values.tolist()
+i = [ j[0] for j in y]
+
+unmatched_fifth = ToBeMatched.drop(i,errors ='ignore') #this errors ignore allows a files of unequal sizes 
+
+matched_fifth = ToBeMatched.drop(unmatched_fifth.index.values)
+len(matched_fifth), len(unmatched_fifth)
+
+
+
+
+
+
