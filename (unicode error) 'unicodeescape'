@@ -1,0 +1,2 @@
+Add encoding='latin1' as so
+pd.read_csv('rektjkerjtlkte.csv', encoding='latin1')
