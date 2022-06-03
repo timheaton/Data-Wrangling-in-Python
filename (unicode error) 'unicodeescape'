@@ -1,2 +1,6 @@
 Add encoding='latin1' as so
-pd.read_csv('rektjkerjtlkte.csv', encoding='latin1')
+pd.read_csv('C:/Users/THU11111/Downloads/message_tracking_1616611013232.csv', encoding='latin1')
+
+also
+# Use the below if Unicode Errors
+#df = pd.read_csv('C:/Users/THU11111/Downloads/message_tracking_1616611013232.csv', header= 0,encoding= 'unicode_escape')
