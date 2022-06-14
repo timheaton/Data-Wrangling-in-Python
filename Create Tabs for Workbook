@@ -1,0 +1,67 @@
+
+Target_Table = "RDW_SF.DM_LOAN.DIM_STD_DAILY_DTM"
+
+#this reads the data dict download from Alation and builds the Excel folder and tabs
+df_columns = pd.read_csv('R:/Data Governance/10-Alation Data Tool/Dictionary Automation/Download Backup/'+ Target_Table +'.csv', encoding='latin1')
+
+column_keys = []
+for i, row in df_columns.iterrows():
+    #print(row)
+    x = re.findall(r'[^.]+$', row[0])
+    x = ''.join(x)
+    column_keys.append(x)
+
+
+
+
+with pd.ExcelWriter('R:/Data Governance/10-Alation Data Tool/Dictionary Automation/Files To Be Checked/'+ Target_Table + '.xlsx') as writer:
+        for i in column_keys:
+
+            #working block, finding all the "i" that also is not derived and has a blank Method_Code
+            df_coldef = df_BIC_Data_Def.loc[df_BIC_Data_Def['OBJECT_SQL_1_TEXT'].str.contains(i, case=False)\
+                    & (df_BIC_Data_Def['OBJECT_DERIVED_OBJECT_INDICATOR'] == 'N') \
+                    & (df_BIC_Data_Def['OBJECT_AGGREGATION_METHOD_CODE'] != ('SUM', 'MAX', 'AVERAGE')) ]
+            
+            df_coldef = df_coldef[['OBJECT_NAME','OBJECT_SQL_1_TEXT','OBJECT_DESCRIPTION']]
+            
+            #add  df_coldef['BIC'] column so that we can merge with df_DWETL 
+            df_coldef['BIC']=df_coldef['OBJECT_SQL_1_TEXT'].str.extract(r'^([^.]*).*')
+            df_coldef = pd.merge(df_coldef,df_DWETL, on="BIC" , how='inner')
+            
+            #reduce to only the columns we care about
+            #df_coldef = df_coldef[['OBJECT_NAME','OBJECT_DESCRIPTION']]
+            df_coldef = df_coldef.drop_duplicates(ignore_index=True)
+            df_coldef["Use"] = ''
+            df_coldef["Column"] = i
+            df_coldef = df_coldef[['OBJECT_NAME', 'OBJECT_DESCRIPTION', 'Use', 'Column']]
+            
+            df_prev = df_All
+            df_prev['Use'] = np.where(df_prev['Column'] == i,df_prev['description'] ,"NaN")
+            df_prev.rename(columns = {'title':'OBJECT_NAME', 'description':'OBJECT_DESCRIPTION'}, inplace = True)
+            df_prev = df_prev[['OBJECT_NAME', 'OBJECT_DESCRIPTION','Use','Column']]
+            df_prev = df_prev[df_prev['Use'] != "NaN"]
+            
+            #stack df
+            df_final = pd.concat([df_coldef, df_prev])
+            
+            #read to pring only the columns we care about
+            df_final = df_final[['OBJECT_NAME', 'OBJECT_DESCRIPTION', 'Use']]
+            
+            #print workbook
+            df_final.to_excel(writer, sheet_name=i, index=False)
+            
+            
+            
+            for subdir, dirs, files in os.walk(rootdir):
+            
+            #reload the df_All for next "i"
+                for file in files:
+                    #print(file)
+                    #print (os.path.join(subdir, file))
+                    file = pd.read_csv(os.path.join(subdir, file))
+                    #stack all of the csv files that have been downlaoded
+                    df_All = pd.concat([file[1:], file[1:]], ignore_index=True,axis=0)
+
+            #Create new columns for searching
+                    df_All['Column'] = df_All['key'].str.extract(r'([^.]+$).*')
+                    df_All['Table'] = df_All['key'].str.extract(r'^([^.].*(?=\.))')
