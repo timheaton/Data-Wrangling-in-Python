@@ -1,0 +1,7 @@
+import os,glob
+df2 = pd.DataFrame()
+folder_path = 'C:/Users/THH021621/Desktop/ExtraCurricular/CUstomer Segmentation/Output/'
+for filename in glob.glob(os.path.join(folder_path, '*.csv')):
+  with open(filename, 'r') as f:
+    text = f.read()
+    filename = pd.read_csv(filename, index_col=0)
