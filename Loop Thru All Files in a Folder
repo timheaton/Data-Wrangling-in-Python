@@ -5,3 +5,10 @@ for filename in glob.glob(os.path.join(folder_path, '*.csv')):
   with open(filename, 'r') as f:
     text = f.read()
     filename = pd.read_csv(filename, index_col=0)
+
+
+#or this
+import os
+for dirname, _, filenames in os.walk('C:/Users/THH021621/Desktop/Temporary/'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
