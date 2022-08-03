@@ -1,0 +1,5 @@
+#To timestamp a out CSV file
+import datetime
+stamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M")
+#Application_Report.to_csv("+stamp+".csv", index=False)
+df.to_excel(writer, sheet_name=i)
