@@ -2,3 +2,10 @@ Everything before the last "dot"
 import re
 m = re.search('.*(?=\.)', 'svot.xdwstg.tb_e2_oz9_syn_2.csv')
 m.group(0)
+
+exstract everything after the last "dot"
+df['column'].str.extract(r'([^.]+$).*')
+
+
+exstract everything after the last "dot"
+df['column'].str.extract(r'^([^.].*(?=\.))')
