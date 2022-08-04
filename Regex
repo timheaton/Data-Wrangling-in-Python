@@ -7,5 +7,5 @@ exstract everything after the last "dot"
 df['column'].str.extract(r'([^.]+$).*')
 
 
-exstract everything after the last "dot"
+exstract before the last "dot"
 df['column'].str.extract(r'^([^.].*(?=\.))')
