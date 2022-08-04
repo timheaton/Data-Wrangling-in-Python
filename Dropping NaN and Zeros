@@ -1,0 +1,4 @@
+#Drop columns with all NaN
+df2 = df2.dropna(axis=1, how='all')
+#Drop columns with all zeros
+df2 = df2.loc[:, (df2 != 0).any(axis=0)]
