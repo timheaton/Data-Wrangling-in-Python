@@ -1,0 +1,2 @@
+from os import walk
+next(walk('R:/mydesktop/folder/'), (None, None, []))[2] 
