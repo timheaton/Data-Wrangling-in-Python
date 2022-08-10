@@ -9,3 +9,6 @@ df['column'].str.extract(r'([^.]+$).*')
 
 exstract before the last "dot"
 df['column'].str.extract(r'^([^.].*(?=\.))')
+
+#extract everything after the first (dot) pattern"
+df_table['key'].str.extract(r'\.(.*)')
