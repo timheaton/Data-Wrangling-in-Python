@@ -1,0 +1,2 @@
+#check to see if data frames are the same
+df_table1.equals(df_table2)
