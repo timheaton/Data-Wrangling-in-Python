@@ -1,0 +1,17 @@
+#column name long form
+import requests
+log_file = []
+url = "https:XXXXXXXXXXXXXXXXXXXX"
+headers = {'token': token, "accept": "application/json"}
+response = requests.get(url, headers=headers)
+#print(response.text)
+df = response.json()
+#df[1]['key']
+for i in range(len(df)):
+    #print(df[i]["key"])
+    #log_file.append(df)
+    log_file.append(df[i]["key"])
+with open('C:/Users/THH021621/Desktop/Temporary/log_file.txt', 'w') as f:
+    for line in log_file:
+        print(line)
+        f.write(f"{line}\n")    
