@@ -1,1 +1,1 @@
- pd.read_excel(r"R:\YorFolder\Yourfile.xlsx").loc[85:95] 
+next(walk('R:/Yourfolder/'), (None, None, []))[2] 
