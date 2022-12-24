@@ -1,0 +1,5 @@
+with open('C:/Users/THH021621/Desktop/Temporary/testing.txt', 'a') as f:
+            #        f.write('\n')
+                    #f.write(row['key'])
+                    f.write(response.text)
+                    f.write('\n')
