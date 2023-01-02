@@ -1,0 +1,1 @@
+df_list = [d for _, d in df_audit.groupby(['name'])] #create a list of unique names
