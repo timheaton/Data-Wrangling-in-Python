@@ -1,5 +1,5 @@
 
-def resumetable(df):
+def EDA(df):
     print(f"Dataset Shape: {df.shape}")
     summary = pd.DataFrame(df.dtypes,columns=['dtypes'])
     summary = summary.reset_index()
