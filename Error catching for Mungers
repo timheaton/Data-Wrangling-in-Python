@@ -21,3 +21,12 @@ for subdir, dirs, files in os.walk(input_directory):
         except KeyError:
             print(subdir + file + "-KeyError")
             pass
+
+
+################ catch any error
+for file in glob.glob(dir_path, recursive=True):
+    try:
+        print(file)
+        doc = docx.Document(file)
+    except Exception as e:
+        print(e)
