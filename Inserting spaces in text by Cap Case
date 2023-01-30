@@ -1,0 +1,9 @@
+#Inserting spaces in text by Cap Case, 
+import re
+df = pd.read_csv(r'XXXXXXXXXXXXXXXXXXXXXXXXX')
+df['x'] =''
+for index, row in df.head().iterrows():
+    df['x'][index] = ' '.join(re.findall('[A-Z][^A-Z]*', df['Please type your Title in this column'][index]))
+    df['Please type your Title in this column'][index] = df['x'][index] 
+df
+df.to_csv(r'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', index=False )
