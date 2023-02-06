@@ -1,0 +1,5 @@
+for just one
+df_MetadataAPI = df_MetadataAPI.loc[df_MetadataAPI['ds_id'] == 2] # i.e., 2 only
+
+two with Or
+df_Dict.loc[(df_Dict['Database_Object'] == 'rdw_sf') | (df_Dict['Database_Object'] == 'rdw_sf')]
