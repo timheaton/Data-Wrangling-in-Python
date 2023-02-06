@@ -15,3 +15,6 @@ df_table['key'].str.extract(r'\.(.*)')
 
 Everything between "attribute/" and "/"
 df3['attribute'] = df3[0:1]['subject.url'].str.extract(r'attribute/(.*?)/')
+
+Everything before the first dot
+df_Dict['Key'].str.extract(r'^(.*?)\..*')
