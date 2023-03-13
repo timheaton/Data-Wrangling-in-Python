@@ -1,0 +1,23 @@
+##### For extracting as a loop into folders
+#!pip install python-pptx
+from pptx import Presentation
+import glob
+
+for eachfile in glob.glob(r"C:\Users\THH021621\Desktop\Data Quality Dox\*.pptx"):
+    prs = Presentation(eachfile)
+    print(eachfile)
+    print("----------------------")
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if hasattr(shape, "text"):
+                print(shape.text)
+                
+###### single extractions
+
+prs = Presentation(r"C:\Users\THH021621\Desktop\Data Quality Dox\2g-DM DQ  Data Controls Management Plan 2023 0208 RNST.pptx")
+#print(eachfile)
+#print("----------------------")
+for slide in prs.slides:
+    for shape in slide.shapes:
+        if hasattr(shape, "text"):
+            print(shape.text)
