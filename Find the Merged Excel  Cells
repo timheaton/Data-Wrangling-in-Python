@@ -1,0 +1,20 @@
+#find the merged cells
+import pandas as pd
+#pd.read_csv(r'R:\Artificial Intelligence & Data Science\Data Folders\Reunion\ACT9000 Data Dictionary.xlsx',encoding='latin1')
+from openpyxl import load_workbook
+
+wb = load_workbook('R:\Artificial Intelligence & Data Science\Data Folders\Reunion\ACT9000 Data Dictionary.xlsx')
+
+ws = wb.active
+
+# define merged cells
+ws.merged_cells.ranges
+
+# access merged cell data
+for cell_range in ws.merged_cells:
+    for row in range(cell_range.min_row, cell_range.max_row + 1):
+        #print(row)
+        for col in range(cell_range.min_col, cell_range.max_col + 1):
+            cell = ws.cell(row, col)
+            print(cell)
+            #print(cell.value)
