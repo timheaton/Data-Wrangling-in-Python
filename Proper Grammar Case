@@ -1,0 +1,7 @@
+import re
+
+regex = r'(^|\.)\s*(\w)'
+
+test_string = 'hello, world. this is a text string'
+
+print(re.sub(regex, lambda x: x.group(1) + x.group(2).upper(), test_string))
