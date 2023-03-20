@@ -1,0 +1,27 @@
+Write the Pythom script to determine if a data element is a binary,  Boolean,  float, numer, text, time, or date data type. 
+
+data_element = input("Please enter a data element: ")
+ 
+if data_element == "True" or data_element == "False":
+    print("The data element is a Boolean.")
+ 
+elif data_element.isdigit():
+    print("The data element is a number.")
+ 
+elif data_element.count('.') == 1:
+    print("The data element is a float.")
+ 
+elif data_element[0] == '0' or data_element[0] == '1':
+    print("The data element is a binary.")
+ 
+elif data_element.isalpha():
+    print("The data element is text.")
+ 
+elif data_element[2] == ':' and data_element[5] == ':':
+    print("The data element is a time.")
+ 
+elif data_element[2] == '/' and data_element[5] == '/':
+    print("The data element is a date.")
+ 
+else:
+    print("The data type could not be determined.")
