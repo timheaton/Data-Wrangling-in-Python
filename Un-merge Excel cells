@@ -1,0 +1,7 @@
+import pandas as pd 
+
+#read Excel file 
+df = pd.read_excel(r'R:\Data Governance\11-EDW SNOWFLAKE\Vendor Dict Update Project\LeasePlus\LPv2.1.2TablesDataDict.xlsx') 
+
+#unmerge cells 
+df_unmerged = df.unstack().reset_index().drop('level_1', axis=1).rename(columns={'level_0':'index', 0:'value'})
