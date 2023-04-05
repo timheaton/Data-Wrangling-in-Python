@@ -1,2 +1,16 @@
 for index, row in df.iterrows():
     print(row['c1'], row['c2'])
+
+#and this
+#import the necessary packages
+import pandas as pd
+
+#read the data from csv file
+data = pd.read_csv('data.csv')
+
+#update the value of column by rows
+for index, row in data.iterrows():
+    data.at[index, 'column_name'] = row['column_name'] + 5
+
+#save the updated data to csv
+data.to_csv('updated_data.csv', index=False)
